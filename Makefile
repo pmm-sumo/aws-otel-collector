@@ -39,7 +39,7 @@ LDFLAGS=-ldflags "-s -w -X $(BUILD_INFO_IMPORT_PATH).GitHash=$(GIT_SHA) \
 
 GOOS=$(shell go env GOOS)
 GOARCH=$(shell go env GOARCH)
-DOCKER_NAMESPACE=amazon
+DOCKER_NAMESPACE=466880462355.dkr.ecr.us-west-2.amazonaws.com/pmm-test
 COMPONENT=awscollector
 LINT=$(PWD)/bin/golangci-lint
 STATIC_CHECK=$(PWD)/bin/staticcheck

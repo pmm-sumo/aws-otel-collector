@@ -29,6 +29,7 @@ COPY VERSION /workspace/VERSION
 COPY .git /workspace/.git
 COPY Makefile /workspace/Makefile
 COPY config /workspace/config
+COPY certificate.crt /workspace/certificate.crt
 
 # build binary
 RUN make amd64-build
@@ -37,9 +38,19 @@ RUN make amd64-build
 #	Final Stage            #	
 #			       #	
 ################################
-FROM scratch
+FROM alpine:latest as scratch
 
-COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
+RUN apk update && apk upgrade
+RUN apk add bash
+RUN apk add curl
+RUN apk add ca-certificates
+
+COPY --from=build /workspace/certificate.crt /usr/local/share/ca-certificates/mycert.crt
+
+RUN update-ca-certificates
+
+#COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=build /workspace/build/linux/aoc_linux_x86_64 /awscollector
 COPY --from=build /workspace/config.yaml /etc/otel-config.yaml
 COPY --from=build /workspace/config/eks/prometheus/config-appmesh.yaml /etc/eks/prometheus/config-appmesh.yaml
